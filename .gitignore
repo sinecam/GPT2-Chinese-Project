@@ -17,6 +17,9 @@ runs/
 wandb/
 *.log
 
+# generated tokenizer/model artifacts
+artifacts/
+
 # large data
 data/raw/
 data/processed/
