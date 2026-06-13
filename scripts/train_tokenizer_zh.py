@@ -183,15 +183,29 @@ def iter_corpus_lines(args: argparse.Namespace) -> Iterator[str]:
     yield from iter_local_corpus_lines(args)
 
 
-def write_sentencepiece_corpus(args: argparse.Namespace, corpus_path: Path) -> int:
+def write_sentencepiece_corpus(args: argparse.Namespace, corpus_path: Path) -> tuple[int, int]:
     written = 0
+    corpus_chars = 0
     with corpus_path.open("w", encoding="utf-8") as out:
         for line in tqdm(iter_corpus_lines(args), desc="collect tokenizer corpus"):
+            if args.max_corpus_chars > 0:
+                remaining = args.max_corpus_chars - corpus_chars
+                if remaining <= 0:
+                    break
+                if len(line) > remaining:
+                    if remaining < args.min_chars:
+                        break
+                    line = line[:remaining]
+
             out.write(line + "\n")
             written += 1
+            corpus_chars += len(line)
+
             if args.max_lines and written >= args.max_lines:
                 break
-    return written
+            if args.max_corpus_chars > 0 and corpus_chars >= args.max_corpus_chars:
+                break
+    return written, corpus_chars
 
 
 def train_sentencepiece(args: argparse.Namespace, corpus_path: Path) -> None:
@@ -222,7 +236,7 @@ def train_sentencepiece(args: argparse.Namespace, corpus_path: Path) -> None:
     )
 
 
-def write_config(args: argparse.Namespace, model_path: Path, corpus_lines: int) -> None:
+def write_config(args: argparse.Namespace, model_path: Path, corpus_lines: int, corpus_chars: int) -> None:
     sp = spm.SentencePieceProcessor(model_file=str(model_path))
     config = {
         "tokenizer": "sentencepiece",
@@ -232,6 +246,7 @@ def write_config(args: argparse.Namespace, model_path: Path, corpus_lines: int) 
         "character_coverage": args.character_coverage,
         "byte_fallback": args.byte_fallback,
         "corpus_lines": corpus_lines,
+        "corpus_chars": corpus_chars,
         "num_threads": args.num_threads,
         "num_workers": args.num_workers,
         "special_tokens": {
@@ -265,6 +280,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--normalization_rule_name", type=str, default="nmt_nfkc")
     parser.add_argument("--input_sentence_size", type=int, default=20000000)
     parser.add_argument("--max_lines", type=int, default=0)
+    parser.add_argument("--max_corpus_chars", type=int, default=0, help="Stop after this many corpus characters; 200M is usually enough for a 50k Chinese BPE tokenizer.")
     parser.add_argument("--min_chars", type=int, default=8)
     parser.add_argument("--max_chars_per_line", type=int, default=4096)
     parser.add_argument("--num_threads", type=int, default=cpu_count(), help="SentencePiece trainer threads.")
@@ -284,6 +300,8 @@ def main() -> None:
         raise ValueError("--num_workers must be >= 1")
     if args.worker_chunksize < 1:
         raise ValueError("--worker_chunksize must be >= 1")
+    if args.max_corpus_chars < 0:
+        raise ValueError("--max_corpus_chars must be >= 0")
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -291,21 +309,26 @@ def main() -> None:
     print(f"CPU cores detected: {cpu_count()}")
     print(f"SentencePiece num_threads: {args.num_threads}")
     print(f"local corpus num_workers: {args.num_workers}")
+    if args.max_corpus_chars > 0:
+        print(f"max corpus chars: {args.max_corpus_chars:,}")
 
     corpus_path = out_dir / "tokenizer_corpus.txt"
-    corpus_lines = write_sentencepiece_corpus(args, corpus_path)
+    corpus_lines, corpus_chars = write_sentencepiece_corpus(args, corpus_path)
     if corpus_lines == 0:
         raise ValueError("Tokenizer corpus is empty after filtering.")
+    print(f"tokenizer corpus lines: {corpus_lines:,}")
+    print(f"tokenizer corpus chars: {corpus_chars:,}")
 
     train_sentencepiece(args, corpus_path)
     model_path = out_dir / f"{args.model_prefix}.model"
-    write_config(args, model_path, corpus_lines)
+    write_config(args, model_path, corpus_lines, corpus_chars)
 
     if not args.keep_corpus:
         corpus_path.unlink(missing_ok=True)
 
     print(f"trained tokenizer: {model_path}")
     print(f"corpus lines: {corpus_lines:,}")
+    print(f"corpus chars: {corpus_chars:,}")
 
 
 if __name__ == "__main__":
