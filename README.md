@@ -64,7 +64,8 @@ python scripts/train_tokenizer_zh.py \
   --out_dir artifacts/tokenizer_zh \
   --vocab_size 50000 \
   --model_type bpe \
-  --max_lines 20000000 \
+  --max_corpus_chars 200000000 \
+  --max_chars_per_line 768 \
   --num_threads 50 \
   --num_workers 24 \
   --worker_chunksize 2048
@@ -78,13 +79,18 @@ python scripts/train_tokenizer_zh.py \
   --hf_split train \
   --out_dir artifacts/tokenizer_zh \
   --vocab_size 50000 \
+  --max_corpus_chars 200000000 \
+  --max_chars_per_line 768 \
   --num_threads 50
 ```
 
-多核参数说明：
+多核和语料大小参数说明：
 
 - `--num_threads` 传给 SentencePiece C++ trainer，默认等于检测到的 CPU 核数。50 核服务器可以直接设 `50`。
 - `--num_workers` 只加速本地 `txt/json/jsonl` 到 tokenizer 临时语料的格式化阶段；Hugging Face streaming 仍主要受网络、磁盘缓存和数据集迭代速度限制。
+- SentencePiece 的 `Tokenizing input sentences with whitespace` 等部分阶段在一些版本里不能完全吃满多核。遇到这个卡点，优先减少 tokenizer 训练语料字符数，而不是继续堆线程。
+- `--max_corpus_chars 200000000` 会把 tokenizer 临时语料控制在约 2 亿字符；对 50k 中文 BPE 通常已经足够。完整大语料应留给模型预训练。
+- `--max_chars_per_line 512` 到 `1024` 通常比长篇整段输入更快、更稳。长文档不需要完整喂给 tokenizer 才能学到好词表。
 - 如果 CPU 不满但磁盘 I/O 打满，先把 `--num_workers` 降到 `8` 或 `16`；如果内存压力不大，可以试 `24` 到 `32`。
 - `--worker_chunksize` 控制每个进程一次处理多少条记录，JSONL 大文件通常 `1024` 到 `4096` 比较合适。
 
