@@ -1,7 +1,10 @@
 import argparse
 import json
+import os
+from concurrent.futures import ProcessPoolExecutor
+from itertools import repeat
 from pathlib import Path
-from typing import Any, Iterable, Iterator
+from typing import Any, Iterator
 
 import sentencepiece as spm
 from tqdm import tqdm
@@ -20,6 +23,10 @@ TEXT_FIELDS = (
 )
 
 ROLE_SYMBOLS = ["<user>", "<assistant>", "<system>", "<sep>"]
+
+
+def cpu_count() -> int:
+    return max(1, os.cpu_count() or 1)
 
 
 def normalize_text(text: str) -> str:
@@ -72,6 +79,15 @@ def record_to_text(record: Any) -> str:
     return "\n".join(values)
 
 
+def record_to_corpus_line(record: Any, min_chars: int, max_chars_per_line: int) -> str | None:
+    text = normalize_text(record_to_text(record))
+    if len(text) < min_chars:
+        return None
+    if max_chars_per_line > 0:
+        text = text[:max_chars_per_line]
+    return text.replace("\n", " ")
+
+
 def iter_json_array(value: Any) -> Iterator[Any]:
     if isinstance(value, list):
         yield from value
@@ -121,33 +137,57 @@ def iter_hf_records(args: argparse.Namespace) -> Iterator[Any]:
     yield from dataset
 
 
-def iter_texts(args: argparse.Namespace) -> Iterator[str]:
-    if args.hf_dataset:
-        for record in iter_hf_records(args):
-            text = record_to_text(record)
-            if text:
-                yield text
+def iter_hf_corpus_lines(args: argparse.Namespace) -> Iterator[str]:
+    if not args.hf_dataset:
+        return
+    for record in iter_hf_records(args):
+        line = record_to_corpus_line(record, args.min_chars, args.max_chars_per_line)
+        if line:
+            yield line
 
-    for raw_path in args.input:
-        path = Path(raw_path)
-        if not path.exists():
-            raise FileNotFoundError(f"Input not found: {path}")
-        for record in iter_local_records(path):
-            text = record_to_text(record)
-            if text:
-                yield text
+
+def iter_local_corpus_lines(args: argparse.Namespace) -> Iterator[str]:
+    if not args.input:
+        return
+
+    if args.num_workers <= 1:
+        for raw_path in args.input:
+            path = Path(raw_path)
+            if not path.exists():
+                raise FileNotFoundError(f"Input not found: {path}")
+            for record in iter_local_records(path):
+                line = record_to_corpus_line(record, args.min_chars, args.max_chars_per_line)
+                if line:
+                    yield line
+        return
+
+    with ProcessPoolExecutor(max_workers=args.num_workers) as executor:
+        for raw_path in args.input:
+            path = Path(raw_path)
+            if not path.exists():
+                raise FileNotFoundError(f"Input not found: {path}")
+            mapped = executor.map(
+                record_to_corpus_line,
+                iter_local_records(path),
+                repeat(args.min_chars),
+                repeat(args.max_chars_per_line),
+                chunksize=args.worker_chunksize,
+            )
+            for line in mapped:
+                if line:
+                    yield line
+
+
+def iter_corpus_lines(args: argparse.Namespace) -> Iterator[str]:
+    yield from iter_hf_corpus_lines(args)
+    yield from iter_local_corpus_lines(args)
 
 
 def write_sentencepiece_corpus(args: argparse.Namespace, corpus_path: Path) -> int:
     written = 0
     with corpus_path.open("w", encoding="utf-8") as out:
-        for text in tqdm(iter_texts(args), desc="collect tokenizer corpus"):
-            text = normalize_text(text)
-            if len(text) < args.min_chars:
-                continue
-            if args.max_chars_per_line > 0:
-                text = text[: args.max_chars_per_line]
-            out.write(text.replace("\n", " ") + "\n")
+        for line in tqdm(iter_corpus_lines(args), desc="collect tokenizer corpus"):
+            out.write(line + "\n")
             written += 1
             if args.max_lines and written >= args.max_lines:
                 break
@@ -169,6 +209,7 @@ def train_sentencepiece(args: argparse.Namespace, corpus_path: Path) -> None:
         normalization_rule_name=args.normalization_rule_name,
         input_sentence_size=args.input_sentence_size,
         shuffle_input_sentence=True,
+        num_threads=args.num_threads,
         pad_id=0,
         unk_id=1,
         bos_id=2,
@@ -191,6 +232,8 @@ def write_config(args: argparse.Namespace, model_path: Path, corpus_lines: int) 
         "character_coverage": args.character_coverage,
         "byte_fallback": args.byte_fallback,
         "corpus_lines": corpus_lines,
+        "num_threads": args.num_threads,
+        "num_workers": args.num_workers,
         "special_tokens": {
             "pad_id": int(sp.pad_id()),
             "unk_id": int(sp.unk_id()),
@@ -224,6 +267,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max_lines", type=int, default=0)
     parser.add_argument("--min_chars", type=int, default=8)
     parser.add_argument("--max_chars_per_line", type=int, default=4096)
+    parser.add_argument("--num_threads", type=int, default=cpu_count(), help="SentencePiece trainer threads.")
+    parser.add_argument("--num_workers", type=int, default=1, help="Parallel local corpus formatting workers. HF streaming stays sequential.")
+    parser.add_argument("--worker_chunksize", type=int, default=1024)
     parser.add_argument("--keep_corpus", action="store_true")
     return parser.parse_args()
 
@@ -232,9 +278,19 @@ def main() -> None:
     args = parse_args()
     if not args.input and not args.hf_dataset:
         raise ValueError("Provide --input files or --hf_dataset.")
+    if args.num_threads < 1:
+        raise ValueError("--num_threads must be >= 1")
+    if args.num_workers < 1:
+        raise ValueError("--num_workers must be >= 1")
+    if args.worker_chunksize < 1:
+        raise ValueError("--worker_chunksize must be >= 1")
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
+
+    print(f"CPU cores detected: {cpu_count()}")
+    print(f"SentencePiece num_threads: {args.num_threads}")
+    print(f"local corpus num_workers: {args.num_workers}")
 
     corpus_path = out_dir / "tokenizer_corpus.txt"
     corpus_lines = write_sentencepiece_corpus(args, corpus_path)
