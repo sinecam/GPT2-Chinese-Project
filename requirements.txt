@@ -1,0 +1,5 @@
+torch>=2.1
+numpy>=1.24
+sentencepiece>=0.1.99
+datasets>=2.18
+tqdm>=4.66
