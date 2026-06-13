@@ -64,7 +64,10 @@ python scripts/train_tokenizer_zh.py \
   --out_dir artifacts/tokenizer_zh \
   --vocab_size 50000 \
   --model_type bpe \
-  --max_lines 20000000
+  --max_lines 20000000 \
+  --num_threads 50 \
+  --num_workers 24 \
+  --worker_chunksize 2048
 ```
 
 Hugging Face 数据集示例：
@@ -74,8 +77,16 @@ python scripts/train_tokenizer_zh.py \
   --hf_dataset BelleGroup/train_2M_CN \
   --hf_split train \
   --out_dir artifacts/tokenizer_zh \
-  --vocab_size 50000
+  --vocab_size 50000 \
+  --num_threads 50
 ```
+
+多核参数说明：
+
+- `--num_threads` 传给 SentencePiece C++ trainer，默认等于检测到的 CPU 核数。50 核服务器可以直接设 `50`。
+- `--num_workers` 只加速本地 `txt/json/jsonl` 到 tokenizer 临时语料的格式化阶段；Hugging Face streaming 仍主要受网络、磁盘缓存和数据集迭代速度限制。
+- 如果 CPU 不满但磁盘 I/O 打满，先把 `--num_workers` 降到 `8` 或 `16`；如果内存压力不大，可以试 `24` 到 `32`。
+- `--worker_chunksize` 控制每个进程一次处理多少条记录，JSONL 大文件通常 `1024` 到 `4096` 比较合适。
 
 输出：
 
