@@ -4,7 +4,7 @@ import os
 from concurrent.futures import ProcessPoolExecutor
 from itertools import repeat
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any, Iterator, Optional
 
 import sentencepiece as spm
 from tqdm import tqdm
@@ -79,7 +79,7 @@ def record_to_text(record: Any) -> str:
     return "\n".join(values)
 
 
-def record_to_corpus_line(record: Any, min_chars: int, max_chars_per_line: int) -> str | None:
+def record_to_corpus_line(record: Any, min_chars: int, max_chars_per_line: int) -> Optional[str]:
     text = normalize_text(record_to_text(record))
     if len(text) < min_chars:
         return None
