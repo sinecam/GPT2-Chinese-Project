@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.ipynb_checkpoints/
+
+# environments
+.venv/
+venv/
+env/
+envs/
+*.egg-info/
+
+# logs / runs
+logs/
+runs/
+wandb/
+*.log
+
+# large data
+data/raw/
+data/processed/
+data/*.zip
+data/**/*.zip
+data/**/*.bin
+data/**/*.npy
+data/**/*.npz
+data/**/*.pkl
+data/**/*.json
+data/**/*.jsonl
+
+# keep optional small samples if you create them
+!data/README.md
+!data/samples/
+!data/samples/**
+
+# checkpoints / model weights
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# archives
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# system files
+.DS_Store
+Thumbs.db
