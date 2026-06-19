@@ -75,8 +75,7 @@ CATEGORY_RATIOS = {
 def normalize_text(text: Any) -> str:
     text = str(text or "")
     text = text.replace("\u0000", " ").replace("\r\n", "\n").replace("\r", "\n")
-    text = SPACE_RE.sub(" ", text).strip()
-    return text
+    return SPACE_RE.sub(" ", text).strip()
 
 
 def zh_count(text: str) -> int:
@@ -85,8 +84,6 @@ def zh_count(text: str) -> int:
 
 def en_ratio(text: str) -> float:
     text = text or ""
-    if not text:
-        return 0.0
     return len(EN_RE.findall(text)) / max(1, len(text))
 
 
@@ -114,11 +111,9 @@ def normalize_record(record: Any) -> dict[str, str] | None:
                 continue
             role = normalize_role(str(item.get("role") or item.get("from") or ""))
             content = normalize_text(item.get("content") or item.get("value") or item.get("text"))
-            if not content:
-                continue
-            if role == "user" and not user:
+            if role == "user" and content and not user:
                 user = content
-            elif role == "assistant" and not assistant:
+            elif role == "assistant" and content and not assistant:
                 assistant = content
             if user and assistant:
                 return {"instruction": user, "input": "", "output": assistant}
@@ -134,8 +129,7 @@ def normalize_record(record: Any) -> dict[str, str] | None:
 def iter_json_array(value: Any) -> Iterator[Any]:
     if isinstance(value, list):
         yield from value
-        return
-    if isinstance(value, dict):
+    elif isinstance(value, dict):
         for key in ("data", "train", "records", "items"):
             if isinstance(value.get(key), list):
                 yield from value[key]
@@ -192,9 +186,7 @@ def too_repetitive(text: str) -> bool:
         if most >= 8 and most / len(grams) > 0.08:
             return True
     sentences = [s for s in re.split(r"[。！？!?]\s*", text) if len(s) >= 6]
-    if len(sentences) >= 4 and len(set(sentences)) <= len(sentences) // 2:
-        return True
-    return False
+    return len(sentences) >= 4 and len(set(sentences)) <= len(sentences) // 2
 
 
 def classify(row: dict[str, str]) -> str:
@@ -218,25 +210,13 @@ def quality_score(row: dict[str, str], category: str) -> float:
     instruction = row["instruction"]
     output = row["output"]
     out_len = len(output)
-    score = 0.0
-
-    score += min(zh_count(output) / 120, 4.0)
-    if 40 <= out_len <= 450:
-        score += 3.0
-    elif 20 <= out_len <= 800:
-        score += 1.5
-    if "。" in output or "！" in output or "？" in output:
-        score += 1.0
-    if category in {"writing", "creative"} and out_len <= 500:
-        score += 1.0
-    if category == "core_ai" and any(word in output for word in ("人工智能", "模型", "学习", "自然语言")):
-        score += 1.0
-    if category == "identity" and "中文 AI 助手" in output:
-        score += 2.0
-    if en_ratio(instruction + output) > 0.18:
-        score -= 2.0
-    if len(output) > 1000:
-        score -= 2.0
+    score = min(zh_count(output) / 120, 4.0)
+    score += 3.0 if 40 <= out_len <= 450 else 1.5 if 20 <= out_len <= 800 else 0.0
+    score += 1.0 if any(p in output for p in "。！？") else 0.0
+    score += 1.0 if category in {"writing", "creative"} and out_len <= 500 else 0.0
+    score += 1.0 if category == "core_ai" and any(w in output for w in ("人工智能", "模型", "学习", "自然语言")) else 0.0
+    score += 2.0 if category == "identity" and "中文 AI 助手" in output else 0.0
+    score -= 2.0 if en_ratio(instruction + output) > 0.18 else 0.0
     return score
 
 
@@ -255,34 +235,27 @@ def fingerprint(row: dict[str, str]) -> str:
 
 def good(row: dict[str, str], args: argparse.Namespace) -> bool:
     instruction = row["instruction"]
-    inp = row.get("input", "")
     output = row["output"]
-    text = f"{instruction}\n{inp}\n{output}"
+    text = f"{instruction}\n{row.get('input', '')}\n{output}"
     lower = text.lower()
-
     if not instruction or not output:
         return False
     if len(instruction) > args.max_instruction_chars or len(output) > args.max_answer_chars:
         return False
     if zh_count(instruction) < args.min_instruction_zh or zh_count(output) < args.min_answer_zh:
         return False
-    if en_ratio(text) > args.max_en_ratio:
-        return False
-    if URL_RE.search(text):
+    if en_ratio(text) > args.max_en_ratio or URL_RE.search(text):
         return False
     if not args.allow_code and any(keyword in lower for keyword in BAD_KEYWORDS):
         return False
-    if too_repetitive(output):
-        return False
-    if output.count("\n") > 18:
+    if too_repetitive(output) or output.count("\n") > 18:
         return False
     return True
 
 
 def category_limits(max_records: int) -> dict[str, int]:
     limits = {name: max(1, int(max_records * ratio)) for name, ratio in CATEGORY_RATIOS.items()}
-    remainder = max_records - sum(limits.values())
-    limits["knowledge"] += remainder
+    limits["knowledge"] += max_records - sum(limits.values())
     return limits
 
 
@@ -298,14 +271,6 @@ def add_candidate(
     cap = max(200, limit * 4)
     if len(pools[category]) > cap:
         pools[category] = nlargest(max(100, limit * 2), pools[category], key=lambda item: item[0])
-
-
-def build_seed_rows(seed_repeat: int) -> list[dict[str, str]]:
-    rows = []
-    for _ in range(seed_repeat):
-        for instruction, output in CORE_SEED_EXAMPLES:
-            rows.append({"instruction": instruction, "input": "", "output": output})
-    return rows
 
 
 def parse_args() -> argparse.Namespace:
@@ -330,24 +295,19 @@ def main() -> None:
     random.seed(args.seed)
     limits = category_limits(args.max_records)
     pools: dict[str, list[tuple[float, int, dict[str, str]]]] = {key: [] for key in limits}
-    seen_fingerprints = set()
-    stats = {
-        "total_input": 0,
-        "normalized": 0,
-        "kept_candidates": 0,
-        "duplicates": 0,
-        "filtered": 0,
-    }
+    seen_external = set()
+    seed_fingerprints = set()
+    stats = {"total_input": 0, "normalized": 0, "kept_candidates": 0, "duplicates": 0, "filtered": 0}
 
     serial = 0
-    for row in build_seed_rows(args.seed_repeat):
-        fp = fingerprint(row)
-        if fp in seen_fingerprints:
-            continue
-        seen_fingerprints.add(fp)
-        category = classify(row)
-        add_candidate(pools, row, category, 100.0, serial, limits[category])
-        serial += 1
+    for _ in range(args.seed_repeat):
+        for instruction, output in CORE_SEED_EXAMPLES:
+            row = {"instruction": instruction, "input": "", "output": output}
+            seed_fingerprints.add(fingerprint(row))
+            category = classify(row)
+            add_candidate(pools, row, category, 100.0, serial, limits[category])
+            serial += 1
+    seen_external.update(seed_fingerprints)
 
     for record in iter_records(args.input, args.scan_limit):
         stats["total_input"] += 1
@@ -360,13 +320,12 @@ def main() -> None:
             stats["filtered"] += 1
             continue
         fp = fingerprint(row)
-        if fp in seen_fingerprints:
+        if fp in seen_external:
             stats["duplicates"] += 1
             continue
-        seen_fingerprints.add(fp)
+        seen_external.add(fp)
         category = classify(row)
-        score = quality_score(row, category)
-        add_candidate(pools, row, category, score, serial, limits[category])
+        add_candidate(pools, row, category, quality_score(row, category), serial, limits[category])
         serial += 1
         stats["kept_candidates"] += 1
 
@@ -390,6 +349,7 @@ def main() -> None:
         "selected_by_category": selected_by_category,
         "seed_examples": len(CORE_SEED_EXAMPLES),
         "seed_repeat": args.seed_repeat,
+        "seed_records_requested": len(CORE_SEED_EXAMPLES) * args.seed_repeat,
         "limits": limits,
         **stats,
     }
