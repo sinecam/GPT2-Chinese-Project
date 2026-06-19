@@ -1,0 +1,13 @@
+{
+  "tokenizer": "spm_zh.model",
+  "vocab_size": 50000,
+  "dtype": "uint16",
+  "mode": "dialogue",
+  "train_tokens": 27887907,
+  "val_tokens": 279553,
+  "train_records": 134166,
+  "val_records": 1352,
+  "skipped_records": 0,
+  "val_ratio": 0.01,
+  "format": "raw contiguous token ids for causal language modeling"
+}
