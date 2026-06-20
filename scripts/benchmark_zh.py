@@ -45,7 +45,7 @@ def parse_args() -> argparse.Namespace:
         help="Repeat for every model, for example --model V4.5=checkpoints/V4.5/ckpt.pt",
     )
     parser.add_argument("--tokenizer", required=True)
-    parser.add_argument("--suite", default="eval/zh_generation_v1.jsonl")
+    parser.add_argument("--suite", default="eval/zh_generation_v2.jsonl")
     parser.add_argument("--out_dir", default="reports/zh_generation_v1")
     parser.add_argument(
         "--system_prompt",
