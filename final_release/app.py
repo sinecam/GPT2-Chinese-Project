@@ -10,7 +10,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
-from engine import ChineseGPT2Engine, GenerationConfig
+from final_release.engine import ChineseGPT2Engine, GenerationConfig
 
 
 ROOT = Path(__file__).resolve().parent

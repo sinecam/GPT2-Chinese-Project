@@ -7,7 +7,7 @@ import sentencepiece as spm
 import torch
 import torch.nn.functional as F
 
-from model import GPT, GPTConfig
+from model.gpt import GPT, GPTConfig
 
 
 @dataclass(frozen=True)
@@ -210,7 +210,7 @@ class ChineseGPT2Engine:
         return text.strip()
 
     @staticmethod
-    def _format_prompt(
+    def format_prompt(
         history: list[dict[str, str]],
         message: str,
         system_prompt: str,
@@ -230,7 +230,7 @@ class ChineseGPT2Engine:
         parts.append("<assistant>\n")
         return "\n<sep>\n".join(parts)
 
-    def _encode_prompt(self, prompt: str) -> list[int]:
+    def encode_prompt(self, prompt: str) -> list[int]:
         token_ids = self.tokenizer.encode(prompt, out_type=int)
         bos_id = int(self.tokenizer.bos_id())
         if bos_id >= 0:
@@ -244,13 +244,13 @@ class ChineseGPT2Engine:
         history: list[dict[str, str]],
         config: GenerationConfig,
     ) -> str:
-        prompt = self._format_prompt(
+        prompt = self.format_prompt(
             history,
             message,
             config.system_prompt,
             config.max_turns,
         )
-        input_ids = self._encode_prompt(prompt)
+        input_ids = self.encode_prompt(prompt)
         token_ids = torch.tensor(
             input_ids,
             dtype=torch.long,
@@ -261,7 +261,8 @@ class ChineseGPT2Engine:
         for _ in range(config.max_new_tokens):
             model_input = token_ids[:, -self.model.config.block_size :]
             with self._precision_context():
-                logits = self.model(model_input)[:, -1, :]
+                logits, _ = self.model(model_input)
+                logits = logits[:, -1, :]
 
             self._ban_token_ids(logits, self.bad_ids)
             self._ban_token_ids(

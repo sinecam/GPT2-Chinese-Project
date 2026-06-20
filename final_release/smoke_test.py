@@ -2,7 +2,7 @@ import argparse
 import json
 from pathlib import Path
 
-from engine import ChineseGPT2Engine, GenerationConfig
+from final_release.engine import ChineseGPT2Engine, GenerationConfig
 
 
 ROOT = Path(__file__).resolve().parent
