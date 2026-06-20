@@ -93,6 +93,8 @@ def generate_safety_rows() -> tuple[list[dict[str, str]], list[dict[str, str]]]:
         "只说明不能协助，不要列步骤：",
         "请避免任何可执行建议：",
         "请在两句话以内回应：",
+        "拒绝后不要继续生成内容：",
+        "请只给出简短拒绝：",
     )
     refusal_suffixes = (
         "。",
@@ -273,11 +275,13 @@ def generate_strict_rows() -> dict[str, list[dict[str, str]]]:
         "请删除冗余并总结：", "一句话摘要：", "请直接写摘要：", "将内容简化为一句：",
         "保持原意并压缩：", "请给出可直接使用的摘要：", "不超过50字概括：",
     )
+    bounded_suffixes = ("", "不要展开。", "回答后结束。", "不要添加标题。")
     for source, answer in summaries:
         for prefix in summary_prefixes:
-            bounded_rows.append(
-                row("strict_bounded", f"{prefix}{source}。", answer, "v47_curated")
-            )
+            for suffix in bounded_suffixes:
+                bounded_rows.append(
+                    row("strict_bounded", f"{prefix}{source}。{suffix}", answer, "v47_curated")
+                )
 
     two_sentence_cases = (
         ("规律运动的好处", "规律运动有助于增强体质和改善心肺功能。它也能缓解压力并提升睡眠质量。"),
@@ -305,9 +309,10 @@ def generate_strict_rows() -> dict[str, list[dict[str, str]]]:
     )
     for topic, answer in two_sentence_cases:
         for template in sentence_templates:
-            bounded_rows.append(
-                row("strict_bounded", template.format(topic=topic), answer, "v47_curated")
-            )
+            for suffix in bounded_suffixes:
+                bounded_rows.append(
+                    row("strict_bounded", template.format(topic=topic) + suffix, answer, "v47_curated")
+                )
 
     return {
         "strict_exact": exact_rows,
@@ -445,12 +450,14 @@ def generate_anti_echo_rows() -> dict[str, list[dict[str, str]]]:
     recipients = ("张老师", "李经理", "王主管", "陈老师", "赵经理")
     reasons = ("感冒发烧", "身体不适", "需要就医", "家中有急事", "参加学校活动")
     days = ("一天", "半天", "明天一天", "周五一天")
+    email_prefixes = ("请直接写正文：", "不要复述要求：", "请给出可直接发送的邮件：")
     for recipient in recipients:
         for reason in reasons:
             for day in days:
-                instruction = f"写一封简短请假邮件，收件人是{recipient}，因为{reason}请假{day}。"
-                answer = f"{recipient}，您好！我因{reason}，申请请假{day}。相关事务会提前安排，恳请批准。谢谢！"
-                emails.append(row("anti_echo_email", instruction, answer, "v47_generated"))
+                for prefix in email_prefixes:
+                    instruction = f"{prefix}写一封简短请假邮件，收件人是{recipient}，因为{reason}请假{day}。"
+                    answer = f"{recipient}，您好！我因{reason}，申请请假{day}。相关事务会提前安排，恳请批准。谢谢！"
+                    emails.append(row("anti_echo_email", instruction, answer, "v47_generated"))
 
     summaries = []
     summary_cases = (
@@ -471,6 +478,7 @@ def generate_anti_echo_rows() -> dict[str, list[dict[str, str]]]:
         "一句话概括以下信息：", "请直接输出摘要：", "将内容改写为一句简洁表述：", "请给出可直接使用的总结：",
         "不需要解释，概括：", "用最短的完整句总结：", "请写一句结论：", "把下面内容压缩：",
         "摘要任务：", "请生成一句话摘要：", "请简明概括：", "只写摘要正文：",
+        "请压缩为正式摘要：", "只输出一句总结：", "请直接概括重点：", "精简下面的内容：", "生成一句可用摘要：",
     )
     for source, answer in summary_cases:
         for prefix in summary_prefixes:
@@ -495,6 +503,7 @@ def generate_anti_echo_rows() -> dict[str, list[dict[str, str]]]:
         "请给出可直接使用的版本：", "改成正式中文：", "请简洁改写：", "不改变原意，正式表达：",
         "请压缩并润色：", "将下面的话规范化：", "只写最终结果：", "请优化表达：",
         "改为工作场景用语：", "请写出正式版本：", "去掉冗余并改写：", "请完成文字润色：",
+        "用正式语气重写：", "请只返回改写结果：", "将表达改得简洁准确：", "直接给出规范版本：", "请改成书面表达：",
     )
     for source, answer in rewrite_cases:
         for prefix in rewrite_prefixes:
