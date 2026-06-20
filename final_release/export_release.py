@@ -1,4 +1,5 @@
 import argparse
+import gc
 import hashlib
 import json
 import shutil
@@ -48,6 +49,7 @@ def main() -> None:
         args.checkpoint,
         map_location="cpu",
         weights_only=False,
+        mmap=True,
     )
     required = ("model", "config")
     missing = [key for key in required if key not in checkpoint]
@@ -65,6 +67,8 @@ def main() -> None:
         )
         if key in checkpoint
     }
+    del checkpoint
+    gc.collect()
     torch.save(release_checkpoint, model_path)
     shutil.copy2(args.tokenizer, tokenizer_path)
 

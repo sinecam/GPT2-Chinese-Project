@@ -1,3 +1,4 @@
+import gc
 from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
@@ -56,23 +57,31 @@ class ChineseGPT2Engine:
 
         checkpoint = torch.load(
             checkpoint_path,
-            map_location=self.device,
+            map_location="cpu",
             weights_only=False,
+            mmap=True,
         )
         self.iter_num = int(checkpoint.get("iter_num", -1))
         self.best_val_loss = checkpoint.get("best_val_loss")
 
         config = GPTConfig(**checkpoint["config"])
-        model = GPT(config)
+        state_dict = clean_state_dict(checkpoint["model"])
+        with torch.device("meta"):
+            model = GPT(config)
         missing, unexpected = model.load_state_dict(
-            clean_state_dict(checkpoint["model"]),
+            state_dict,
             strict=False,
+            assign=True,
         )
         if missing or unexpected:
             raise RuntimeError(
                 "checkpoint mismatch: "
                 f"missing={missing[:5]}, unexpected={unexpected[:5]}"
             )
+        model.lm_head.weight = model.transformer.wte.weight
+        del state_dict, checkpoint
+        gc.collect()
+
         model.to(self.device)
         model.eval()
         self.model = model
