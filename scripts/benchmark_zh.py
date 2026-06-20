@@ -45,7 +45,7 @@ def parse_args() -> argparse.Namespace:
         help="Repeat for every model, for example --model V4.5=checkpoints/V4.5/ckpt.pt",
     )
     parser.add_argument("--tokenizer", required=True)
-    parser.add_argument("--suite", default="eval/zh_generation_v2.jsonl")
+    parser.add_argument("--suite", default="eval/zh_generation_v3.jsonl")
     parser.add_argument("--out_dir", default="reports/zh_generation_v1")
     parser.add_argument(
         "--system_prompt",
@@ -159,6 +159,11 @@ def evaluate_check(output: str, check: dict[str, Any]) -> tuple[bool, str]:
 
     if check_type == "contains_any":
         matched = [value for value in values if value in output]
+        return bool(matched), f"matched={matched}"
+
+    if check_type == "starts_with_any":
+        actual = output.lstrip()
+        matched = [value for value in values if actual.startswith(value)]
         return bool(matched), f"matched={matched}"
 
     if check_type == "not_contains_any":
