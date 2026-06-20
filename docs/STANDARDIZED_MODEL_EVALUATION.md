@@ -4,7 +4,7 @@ This workflow compares checkpoints with the same prompts, tokenizer, system prom
 
 ## What Is Measured
 
-The frozen `eval/zh_generation_v2.jsonl` suite contains 37 tasks across:
+The frozen `eval/zh_generation_v3.jsonl` suite contains 37 tasks across:
 
 - identity stability
 - AI and language-model knowledge
@@ -43,8 +43,8 @@ python scripts/benchmark_zh.py \
   --model V4.4=checkpoints/V4.4_sp50k_gpt2small_sft_response_only_mix/ckpt.pt \
   --model V4.5=checkpoints/V4.5_sp50k_gpt2small_sft_quality_mix/ckpt.pt \
   --tokenizer artifacts/tokenizer_zh_50k/spm_zh.model \
-  --suite eval/zh_generation_v2.jsonl \
-  --out_dir reports/V4.4_vs_V4.5_zh_v2 \
+  --suite eval/zh_generation_v3.jsonl \
+  --out_dir reports/V4.4_vs_V4.5_zh_v3 \
   --device cuda \
   --dtype bfloat16 \
   --temperature 0 \
@@ -87,10 +87,10 @@ After the sheets are complete:
 
 ```bash
 python scripts/score_blind_review.py \
-  --input reports/V4.4_vs_V4.5_zh_v2/reviewer_1.csv \
-          reports/V4.4_vs_V4.5_zh_v2/reviewer_2.csv \
-  --key reports/V4.4_vs_V4.5_zh_v2/blind_key.json \
-  --out_dir reports/V4.4_vs_V4.5_zh_v2/human
+  --input reports/V4.4_vs_V4.5_zh_v3/reviewer_1.csv \
+          reports/V4.4_vs_V4.5_zh_v3/reviewer_2.csv \
+  --key reports/V4.4_vs_V4.5_zh_v3/blind_key.json \
+  --out_dir reports/V4.4_vs_V4.5_zh_v3/human
 ```
 
 This creates `human_report.md`, `human_summary.csv`, and `human_by_category.csv`.
@@ -121,7 +121,7 @@ For official comparisons, keep all of the following unchanged:
 - software environment
 - GPU type when comparing latency or tokens per second
 
-Never add benchmark prompts or reference answers to SFT data. Do not edit `zh_generation_v2.jsonl`; create `zh_generation_v2.jsonl` when the suite must change.
+Never add benchmark prompts or reference answers to SFT data. Do not edit `zh_generation_v3.jsonl`; create `zh_generation_v3.jsonl` when the suite must change.
 
 Repeatedly tuning against this public suite gradually turns it into a development set. Keep a second private JSONL suite on the server, using the same schema, for final release checks. Do not commit or train on that private suite.
 
@@ -137,7 +137,7 @@ During script development, run only the first three items:
 python scripts/benchmark_zh.py \
   --model V4.5=checkpoints/V4.5_sp50k_gpt2small_sft_quality_mix/ckpt.pt \
   --tokenizer artifacts/tokenizer_zh_50k/spm_zh.model \
-  --suite eval/zh_generation_v2.jsonl \
+  --suite eval/zh_generation_v3.jsonl \
   --out_dir reports/smoke \
   --limit 3 \
   --temperature 0
