@@ -54,3 +54,6 @@ checkpoints/
 # system files
 .DS_Store
 Thumbs.db
+
+# Large final model weight, kept locally but not committed to GitHub
+/releases/V4.7_final/model.pt

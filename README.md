@@ -13,7 +13,6 @@
 - `vocab_size=50000`
 - 参数量约 124M，使用 token embedding 和 lm head 权重共享
 
-如果显存紧张，可以把 tokenizer 词表改成 `32000`，模型会降到约 111M 参数；如果目标就是接近 GPT-2 Small 124M，建议保留 `50000`。
 
 ## 为什么用 SentencePiece
 
@@ -38,7 +37,7 @@
 
 数据质量比数据量更重要。124M 模型建议至少准备 5B 到 20B 中文 token 做预训练，再用 50 万到 300 万条中文指令/对话样本做 SFT。小规模验证可以先用 1M 到 10M token 跑通流程。
 
-## 安装
+## 1. 安装依赖
 
 ```bash
 pip install -r requirements.txt
