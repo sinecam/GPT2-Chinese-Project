@@ -268,15 +268,18 @@ def score_response(
                 "name": check.get("name", check["type"]),
                 "type": check["type"],
                 "weight": weight,
+                "gate": bool(check.get("gate", False)),
                 "passed": passed,
                 "detail": detail,
             }
         )
-    rule_score = 100.0 * earned / max(total, 1e-12)
+    critical_failure = any(check["gate"] and not check["passed"] for check in checks)
+    rule_score = 0.0 if critical_failure else 100.0 * earned / max(total, 1e-12)
     quality = quality_metrics(output, generated_tokens, max_new_tokens)
     return {
         "rule_score": round(rule_score, 4),
         "task_passed": all(check["passed"] for check in checks),
+        "critical_failure": critical_failure,
         "checks": checks,
         **quality,
     }
@@ -354,6 +357,9 @@ def aggregate_model(label: str, rows: list[dict[str, Any]]) -> dict[str, Any]:
             "rule_score": round(statistics.fmean(float(row["rule_score"]) for row in group), 4),
             "quality_score": round(statistics.fmean(float(row["quality_score"]) for row in group), 4),
             "pass_rate": round(100.0 * sum(bool(row["task_passed"]) for row in group) / len(group), 4),
+            "critical_failure_rate": round(
+                100.0 * sum(bool(row["critical_failure"]) for row in group) / len(group), 4
+            ),
         }
 
     return {
@@ -363,6 +369,9 @@ def aggregate_model(label: str, rows: list[dict[str, Any]]) -> dict[str, Any]:
         "rule_score": round(rule_score, 4),
         "quality_score": round(quality_score, 4),
         "pass_rate": round(100.0 * sum(bool(row["task_passed"]) for row in rows) / len(rows), 4),
+        "critical_failure_rate": round(
+            100.0 * sum(bool(row["critical_failure"]) for row in rows) / len(rows), 4
+        ),
         "reference_loss": None if mean_loss is None else round(mean_loss, 6),
         "reference_ppl": None if mean_loss is None else round(math.exp(min(mean_loss, 20.0)), 4),
         "unknown_response_rate": round(
@@ -387,6 +396,7 @@ def write_summary_csv(path: Path, summaries: list[dict[str, Any]]) -> None:
         "rule_score",
         "quality_score",
         "pass_rate",
+        "critical_failure_rate",
         "reference_loss",
         "reference_ppl",
         "unknown_response_rate",
@@ -421,13 +431,14 @@ def write_report(
         "",
         "## Overall",
         "",
-        "| Model | Auto | Rules | Quality | Pass % | Ref loss | Ref ppl | Unknown % | Truncated % | tok/s |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| Model | Auto | Rules | Quality | Pass % | Critical fail % | Ref loss | Ref ppl | Unknown % | Truncated % | tok/s |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for item in summaries:
         lines.append(
             f"| {item['model']} | {item['auto_score']:.2f} | {item['rule_score']:.2f} | "
             f"{item['quality_score']:.2f} | {item['pass_rate']:.2f} | "
+            f"{item['critical_failure_rate']:.2f} | "
             f"{item['reference_loss'] if item['reference_loss'] is not None else 'n/a'} | "
             f"{item['reference_ppl'] if item['reference_ppl'] is not None else 'n/a'} | "
             f"{item['unknown_response_rate']:.2f} | {item['truncated_rate']:.2f} | "
@@ -665,7 +676,8 @@ def main() -> None:
         print(
             f"{summary['model']}: auto={summary['auto_score']:.2f}, "
             f"rules={summary['rule_score']:.2f}, quality={summary['quality_score']:.2f}, "
-            f"pass={summary['pass_rate']:.2f}%, ref_loss={summary['reference_loss']}",
+            f"pass={summary['pass_rate']:.2f}%, critical_fail={summary['critical_failure_rate']:.2f}%, "
+            f"ref_loss={summary['reference_loss']}",
             flush=True,
         )
 
