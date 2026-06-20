@@ -156,6 +156,24 @@ def save_checkpoint(
     torch.save(checkpoint, path)
 
 
+def save_model_snapshot(
+    path: Path,
+    raw_model: GPT,
+    config: GPTConfig,
+    iter_num: int,
+    best_val_loss: float,
+    args: argparse.Namespace,
+) -> None:
+    snapshot = {
+        "model": raw_model.state_dict(),
+        "config": asdict(config),
+        "iter_num": iter_num,
+        "best_val_loss": best_val_loss,
+        "args": vars(args),
+    }
+    torch.save(snapshot, path)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Response-only SFT for the SentencePiece Chinese GPT-2 model.")
     parser.add_argument("--data_dir", type=str, required=True)
@@ -169,6 +187,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--eval_interval", type=int, default=500)
     parser.add_argument("--eval_iters", type=int, default=50)
     parser.add_argument("--log_interval", type=int, default=10)
+    parser.add_argument(
+        "--snapshot_interval",
+        type=int,
+        default=0,
+        help="Save model-only snapshot every N evaluated iterations; 0 disables snapshots.",
+    )
 
     parser.add_argument("--learning_rate", type=float, default=5e-6)
     parser.add_argument("--min_lr", type=float, default=1e-6)
@@ -277,6 +301,21 @@ def main() -> None:
                         best_val_loss = losses["val"]
                         save_checkpoint(out_dir / "ckpt.pt", raw_model, optimizer, config, iter_num, best_val_loss, args)
                         print(f"saved best checkpoint to {out_dir / 'ckpt.pt'}", flush=True)
+                    if (
+                        args.snapshot_interval > 0
+                        and iter_num > 0
+                        and iter_num % args.snapshot_interval == 0
+                    ):
+                        snapshot_path = out_dir / f"snapshot_iter_{iter_num:06d}.pt"
+                        save_model_snapshot(
+                            snapshot_path,
+                            raw_model,
+                            config,
+                            iter_num,
+                            best_val_loss,
+                            args,
+                        )
+                        print(f"saved model snapshot to {snapshot_path}", flush=True)
                 if ddp:
                     dist.barrier()
 
