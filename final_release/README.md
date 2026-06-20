@@ -6,24 +6,25 @@ This directory is the standalone final project release. It does not depend on th
 
 ```text
 final_release/
-├── app.py
-├── config.json
-├── engine.py
-├── export_release.py
-├── FINAL_REPORT.md
-├── model.py
-├── requirements.txt
-└── static/
-    └── index.html
+|-- app.py
+|-- config.json
+|-- engine.py
+|-- export_release.py
+|-- FINAL_REPORT.md
+|-- model.py
+|-- requirements.txt
+|-- smoke_test.py
+`-- static/
+    `-- index.html
 ```
 
 The exported model files are intentionally not committed:
 
 ```text
 final_release/model/
-├── model.pt
-├── release_manifest.json
-└── spm_zh.model
+|-- model.pt
+|-- release_manifest.json
+`-- spm_zh.model
 ```
 
 ## Requirements
@@ -40,12 +41,25 @@ From the repository root:
 ```bash
 source activate_env.sh
 
-python final_release/export_release.py   --checkpoint checkpoints/V4.7_sp50k_gpt2small_sft_targeted_fix/ckpt.pt   --tokenizer artifacts/tokenizer_zh_50k/spm_zh.model
+python final_release/export_release.py \
+  --checkpoint checkpoints/V4.7_sp50k_gpt2small_sft_targeted_fix/ckpt.pt \
+  --tokenizer artifacts/tokenizer_zh_50k/spm_zh.model
 ```
 
 This creates a model-only checkpoint, copies the tokenizer, and writes SHA-256 hashes to `final_release/model/release_manifest.json`.
 
 The exporter refuses to overwrite an existing release directory.
+
+## Verify
+
+Run one real end-to-end generation before starting the presentation service:
+
+```bash
+cd final_release
+python smoke_test.py --device cuda --dtype bfloat16
+```
+
+A successful run prints `SMOKE TEST PASSED`, the checkpoint iteration, parameter count, device, prompt, and generated answer.
 
 ## Run
 
@@ -63,7 +77,14 @@ http://<server-address>:6006
 Optional arguments:
 
 ```bash
-python app.py   --checkpoint model/model.pt   --tokenizer model/spm_zh.model   --config config.json   --device cuda   --dtype bfloat16   --host 0.0.0.0   --port 6006
+python app.py \
+  --checkpoint model/model.pt \
+  --tokenizer model/spm_zh.model \
+  --config config.json \
+  --device cuda \
+  --dtype bfloat16 \
+  --host 0.0.0.0 \
+  --port 6006
 ```
 
 ## API
@@ -77,7 +98,9 @@ curl http://127.0.0.1:6006/api/status
 Chat:
 
 ```bash
-curl -X POST http://127.0.0.1:6006/api/chat   -H "Content-Type: application/json"   -d '{"message":"请用一句话解释什么是大语言模型。","history":[]}'
+curl -X POST http://127.0.0.1:6006/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"请用一句话解释什么是大语言模型。","history":[]}'
 ```
 
 ## Demo Prompts
