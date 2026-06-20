@@ -29,8 +29,8 @@ class ChatRequest(BaseModel):
     history: list[ChatMessage] = Field(default_factory=list)
     system_prompt: str = "你是一个中文AI助手。回答要简洁、准确。身份问题只回答你是中文AI助手，不要编造姓名、职业或真实人物身份。"
     max_turns: int = Field(6, ge=1, le=20)
-    max_new_tokens: int = Field(160, ge=1, le=600)
-    temperature: float = Field(0.35, ge=0.0, le=2.0)
+    max_new_tokens: int = Field(120, ge=1, le=600)
+    temperature: float = Field(0.0, ge=0.0, le=2.0)
     top_k: int = Field(30, ge=0, le=500)
     top_p: float = Field(0.85, ge=0.0, le=1.0)
     repetition_penalty: float = Field(1.15, ge=1.0, le=2.0)
@@ -52,7 +52,7 @@ class ModelState:
 
 
 STATE = ModelState()
-app = FastAPI(title="GPT-2 Chinese Web Chat", version="1.0")
+app = FastAPI(title="V4.7 Chinese Assistant", version="4.7")
 
 
 def clean_state_dict(state_dict: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]:
@@ -260,7 +260,7 @@ HTML = r"""
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>中文 GPT-2 对话</title>
+  <title>V4.7 中文助手</title>
   <style>
     :root {
       --bg: #f5f7fb;
@@ -419,9 +419,9 @@ HTML = r"""
       <div class="section">
         <h2>生成参数</h2>
         <label>最大 token</label>
-        <div class="row"><input id="maxNewTokens" type="range" min="20" max="400" value="140" step="10"><input id="maxNewTokensValue" value="140"></div>
+        <div class="row"><input id="maxNewTokens" type="range" min="20" max="400" value="120" step="10"><input id="maxNewTokensValue" value="120"></div>
         <label>Temperature</label>
-        <div class="row"><input id="temperature" type="range" min="0" max="1.2" value="0.35" step="0.05"><input id="temperatureValue" value="0.35"></div>
+        <div class="row"><input id="temperature" type="range" min="0" max="1.2" value="0" step="0.05"><input id="temperatureValue" value="0"></div>
         <label>Top-k</label>
         <div class="row"><input id="topK" type="range" min="0" max="120" value="30" step="1"><input id="topKValue" value="30"></div>
         <label>Top-p</label>
@@ -433,18 +433,20 @@ HTML = r"""
       </div>
       <div class="section quick">
         <h2>快速测试</h2>
-        <button data-prompt="你是谁？">你是谁？</button>
-        <button data-prompt="请用三句话解释什么是大语言模型。">解释大语言模型</button>
-        <button data-prompt="深度学习和机器学习有什么区别？">深度学习 vs 机器学习</button>
-        <button data-prompt="帮我写一封请假邮件。">请假邮件</button>
-        <button data-prompt="写一首关于春天的五言诗。">五言诗</button>
+        <button data-prompt="请用一句话介绍你自己，并说明你能提供哪些帮助。">自我介绍</button>
+        <button data-prompt="请用一句话解释什么是大语言模型。">解释大语言模型</button>
+        <button data-prompt="请用两句话说明规律运动的好处，不要列点。">规律运动的好处</button>
+        <button data-prompt="写一封简短请假邮件，收件人是陈老师，因为感冒发烧请假一天。">请假邮件</button>
+        <button data-prompt="写一则100字以内的会议通知：7月8日下午14:00，地点为第二会议室，主题是项目进度。">会议通知</button>
+        <button data-prompt="请概括为一句话：开发工作已经结束，当前正在进行上线前检查。">一句话摘要</button>
+        <button data-prompt="改写得正式简洁：这个方案还可以但是有地方要改。">正式改写</button>
       </div>
       <button id="clear" class="ghost" type="button">清空对话</button>
       <div id="error" class="error"></div>
     </aside>
     <main>
       <header>
-        <h1>中文 GPT-2 对话</h1>
+        <h1>V4.7 中文助手</h1>
         <div id="status" class="status">正在连接模型...</div>
       </header>
       <div id="chat" class="chat"></div>
@@ -554,11 +556,11 @@ loadStatus();
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Serve a browser chat UI for the SentencePiece Chinese GPT model.")
-    parser.add_argument("--ckpt", type=str, default="checkpoints/V4.4_sp50k_gpt2small_sft_response_only_mix/ckpt.pt")
-    parser.add_argument("--tokenizer", type=str, default="artifacts/tokenizer_zh_50k/spm_zh.model")
+    parser.add_argument("--ckpt", type=str, default="releases/V4.7_final/model.pt")
+    parser.add_argument("--tokenizer", type=str, default="releases/V4.7_final/spm_zh.model")
     parser.add_argument("--device", type=str, default="cuda", choices=["cuda", "cpu"])
     parser.add_argument("--host", type=str, default="0.0.0.0")
-    parser.add_argument("--port", type=int, default=7860)
+    parser.add_argument("--port", type=int, default=6006)
     return parser.parse_args()
 
 
