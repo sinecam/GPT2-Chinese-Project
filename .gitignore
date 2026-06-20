@@ -1,56 +1,27 @@
-# Python
 __pycache__/
 *.py[cod]
-*.so
-.ipynb_checkpoints/
-
-# environments
 .venv/
-venv/
 env/
 envs/
 *.egg-info/
 
-# logs / runs
+artifacts/
+checkpoints/
+reports/
 logs/
 runs/
 wandb/
-*.log
+final_release/model/
 
-# generated tokenizer/model artifacts
-artifacts/
-
-# large data
 data/raw/
 data/processed/
-data/*.zip
-data/**/*.zip
-data/**/*.bin
-data/**/*.npy
-data/**/*.npz
-data/**/*.pkl
-data/**/*.json
-data/**/*.jsonl
-
-# keep optional small samples if you create them
-!data/README.md
-!data/samples/
-!data/samples/**
-
-# checkpoints / model weights
-checkpoints/
+*.bin
+*.npy
+*.npz
 *.pt
 *.pth
 *.ckpt
 *.safetensors
 
-# archives
-*.tar
-*.tar.gz
-*.tgz
-*.rar
-*.7z
-
-# system files
 .DS_Store
 Thumbs.db

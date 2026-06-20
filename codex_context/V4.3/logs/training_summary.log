@@ -1,174 +1,0 @@
-===== V4.1 SFT log key lines =====
-loaded checkpoint weights from checkpoints/V4.0_sp50k_gpt2small_pretrain_5b/ckpt.pt
-train tokens=7,617,390, val tokens=78,542, dtype=uint16
-iter 0: train loss 4.0230, val loss 4.0180, ppl 55.59, lr 2.00e-08
-saved best checkpoint to checkpoints/V4.1_sp50k_gpt2small_sft_alpaca_gpt4_zh/ckpt.pt
-iter 500: train loss 2.9427, val loss 2.9625, ppl 19.35, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.1_sp50k_gpt2small_sft_alpaca_gpt4_zh/ckpt.pt
-iter 1000: train loss 2.7263, val loss 2.7675, ppl 15.92, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.1_sp50k_gpt2small_sft_alpaca_gpt4_zh/ckpt.pt
-iter 1500: train loss 2.5847, val loss 2.7153, ppl 15.11, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.1_sp50k_gpt2small_sft_alpaca_gpt4_zh/ckpt.pt
-iter 2000: train loss 2.4891, val loss 2.6098, ppl 13.60, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.1_sp50k_gpt2small_sft_alpaca_gpt4_zh/ckpt.pt
-iter 2500: train loss 2.4100, val loss 2.5867, ppl 13.29, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.1_sp50k_gpt2small_sft_alpaca_gpt4_zh/ckpt.pt
-iter 3000: train loss 2.3463, val loss 2.5644, ppl 12.99, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.1_sp50k_gpt2small_sft_alpaca_gpt4_zh/ckpt.pt
-iter 3500: train loss 2.3250, val loss 2.5350, ppl 12.62, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.1_sp50k_gpt2small_sft_alpaca_gpt4_zh/ckpt.pt
-iter 4000: train loss 2.2532, val loss 2.5330, ppl 12.59, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.1_sp50k_gpt2small_sft_alpaca_gpt4_zh/ckpt.pt
-iter 4500: train loss 2.1934, val loss 2.5121, ppl 12.33, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.1_sp50k_gpt2small_sft_alpaca_gpt4_zh/ckpt.pt
-iter 5000: train loss 2.1567, val loss 2.5030, ppl 12.22, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.1_sp50k_gpt2small_sft_alpaca_gpt4_zh/ckpt.pt
-
-===== V4.3 build mix log =====
-nohup: ignoring input
-loading alpaca-gpt4-chinese...
-Repo card metadata block was not found. Setting CardData to empty.
-alpaca kept: 35338
-loading BelleGroup/train_2M_CN streaming...
-{
-  "output": "data/raw/V4.3_sft_mix_filtered.jsonl",
-  "total_records": 135518,
-  "belle_kept": 100000,
-  "identity_records": 180
-}
-
-===== V4.3 prepare data log =====
-nohup: ignoring input
-encode records: 0it [00:00, ?it/s]encode records: 608it [00:00, 6076.38it/s]encode records: 1216it [00:00, 6069.04it/s]encode records: 1830it [00:00, 6100.64it/s]encode records: 2467it [00:00, 6206.01it/s]encode records: 3088it [00:00, 6138.59it/s]encode records: 3702it [00:00, 6138.71it/s]encode records: 4316it [00:00, 6117.93it/s]encode records: 4928it [00:00, 6098.90it/s]encode records: 5545it [00:00, 6117.96it/s]encode records: 6157it [00:01, 6039.16it/s]encode records: 6767it [00:01, 6055.85it/s]encode records: 7394it [00:01, 6118.89it/s]encode records: 8007it [00:01, 6086.63it/s]encode records: 8616it [00:01, 5980.49it/s]encode records: 9218it [00:01, 5991.06it/s]encode records: 9818it [00:01, 5832.53it/s]encode records: 10436it [00:01, 5931.85it/s]encode records: 11037it [00:01, 5954.70it/s]encode records: 11634it [00:01, 5951.51it/s]encode records: 12230it [00:02, 5823.43it/s]encode records: 12822it [00:02, 5849.16it/s]encode records: 13408it [00:02, 5753.26it/s]encode records: 13990it [00:02, 5770.31it/s]encode records: 14587it [00:02, 5827.33it/s]encode records: 15198it [00:02, 5910.54it/s]encode records: 15790it [00:02, 5789.10it/s]encode records: 16384it [00:02, 5824.47it/s]encode records: 16998it [00:02, 5916.85it/s]encode records: 17591it [00:02, 5899.03it/s]encode records: 18182it [00:03, 5837.85it/s]encode records: 18799it [00:03, 5934.87it/s]encode records: 19393it [00:03, 5846.48it/s]encode records: 19981it [00:03, 5847.47it/s]encode records: 20586it [00:03, 5907.00it/s]encode records: 21178it [00:03, 5840.31it/s]encode records: 21793it [00:03, 5928.26it/s]encode records: 22387it [00:03, 5794.78it/s]encode records: 22980it [00:03, 5833.05it/s]encode records: 23586it [00:03, 5896.15it/s]encode records: 24189it [00:04, 5932.42it/s]encode records: 24783it [00:04, 5795.35it/s]encode records: 25390it [00:04, 5874.24it/s]encode records: 25979it [00:04, 5772.79it/s]encode records: 26558it [00:04, 5749.92it/s]encode records: 27156it [00:04, 5817.14it/s]encode records: 27754it [00:04, 5863.38it/s]encode records: 28353it [00:04, 5900.29it/s]encode records: 28982it [00:04, 6014.66it/s]encode records: 29584it [00:04, 5866.27it/s]encode records: 30182it [00:05, 5897.82it/s]encode records: 30773it [00:05, 5787.96it/s]encode records: 31386it [00:05, 5887.09it/s]encode records: 31976it [00:05, 5861.27it/s]encode records: 32579it [00:05, 5910.77it/s]encode records: 33189it [00:05, 5964.32it/s]encode records: 33786it [00:05, 5905.83it/s]encode records: 34377it [00:05, 5843.53it/s]encode records: 34985it [00:05, 5912.66it/s]encode records: 35577it [00:06, 5889.65it/s]encode records: 36167it [00:06, 5839.74it/s]encode records: 36797it [00:06, 5973.43it/s]encode records: 37395it [00:06, 5949.39it/s]encode records: 37991it [00:06, 5929.02it/s]encode records: 38585it [00:06, 5849.71it/s]encode records: 39203it [00:06, 5945.23it/s]encode records: 39798it [00:06, 5922.08it/s]encode records: 40412it [00:06, 5986.39it/s]encode records: 41011it [00:06, 5831.23it/s]encode records: 41602it [00:07, 5852.84it/s]encode records: 42189it [00:07, 5775.36it/s]encode records: 42811it [00:07, 5904.39it/s]encode records: 43403it [00:07, 5830.32it/s]encode records: 43993it [00:07, 5850.50it/s]encode records: 44592it [00:07, 5889.60it/s]encode records: 45182it [00:07, 5811.99it/s]encode records: 45796it [00:07, 5906.30it/s]encode records: 46388it [00:07, 5897.03it/s]encode records: 47000it [00:07, 5962.07it/s]encode records: 47597it [00:08, 5875.82it/s]encode records: 48186it [00:08, 5863.18it/s]encode records: 48773it [00:08, 5794.05it/s]encode records: 49377it [00:08, 5863.19it/s]encode records: 49964it [00:08, 5756.35it/s]encode records: 50566it [00:08, 5831.58it/s]encode records: 51150it [00:08, 5711.22it/s]encode records: 51755it [00:08, 5808.24it/s]encode records: 52355it [00:08, 5862.54it/s]encode records: 52952it [00:08, 5891.53it/s]encode records: 53542it [00:09, 5779.24it/s]encode records: 54121it [00:09, 5751.03it/s]encode records: 54747it [00:09, 5898.80it/s]encode records: 55366it [00:09, 5981.05it/s]encode records: 55965it [00:09, 5874.55it/s]encode records: 56560it [00:09, 5896.52it/s]encode records: 57151it [00:09, 5874.69it/s]encode records: 57754it [00:09, 5920.52it/s]encode records: 58347it [00:09, 5858.89it/s]encode records: 58946it [00:09, 5896.79it/s]encode records: 59546it [00:10, 5923.33it/s]encode records: 60142it [00:10, 5930.57it/s]encode records: 60736it [00:10, 5897.41it/s]encode records: 61330it [00:10, 5905.83it/s]encode records: 61921it [00:10, 5845.12it/s]encode records: 62507it [00:10, 5849.34it/s]encode records: 63093it [00:10, 5825.30it/s]encode records: 63704it [00:10, 5908.50it/s]encode records: 64295it [00:10, 5906.35it/s]encode records: 64909it [00:11, 5972.69it/s]encode records: 65535it [00:11, 6055.09it/s]encode records: 66141it [00:11, 6023.73it/s]encode records: 66744it [00:11, 5911.15it/s]encode records: 67336it [00:11, 5913.28it/s]encode records: 67928it [00:11, 5886.01it/s]encode records: 68531it [00:11, 5928.48it/s]encode records: 69146it [00:11, 5993.21it/s]encode records: 69746it [00:11, 5856.94it/s]encode records: 70333it [00:11, 5848.97it/s]encode records: 70923it [00:12, 5860.31it/s]encode records: 71529it [00:12, 5916.91it/s]encode records: 72122it [00:12, 5802.23it/s]encode records: 72726it [00:12, 5871.88it/s]encode records: 73314it [00:12, 5835.65it/s]encode records: 73921it [00:12, 5904.14it/s]encode records: 74512it [00:12, 5386.84it/s]encode records: 75128it [00:12, 5602.05it/s]encode records: 75725it [00:12, 5703.69it/s]encode records: 76315it [00:12, 5760.28it/s]encode records: 76941it [00:13, 5903.73it/s]encode records: 77535it [00:13, 5883.48it/s]encode records: 78133it [00:13, 5910.52it/s]encode records: 78726it [00:13, 5911.31it/s]encode records: 79319it [00:13, 5879.75it/s]encode records: 79912it [00:13, 5894.55it/s]encode records: 80503it [00:13, 5858.95it/s]encode records: 81108it [00:13, 5900.47it/s]encode records: 81728it [00:13, 5989.51it/s]encode records: 82328it [00:13, 5943.05it/s]encode records: 82941it [00:14, 5998.01it/s]encode records: 83542it [00:14, 5904.40it/s]encode records: 84133it [00:14, 5901.78it/s]encode records: 84736it [00:14, 5938.93it/s]encode records: 85331it [00:14, 5824.60it/s]encode records: 85939it [00:14, 5898.26it/s]encode records: 86541it [00:14, 5933.13it/s]encode records: 87135it [00:14, 5879.86it/s]encode records: 87724it [00:14, 5871.20it/s]encode records: 88312it [00:14, 5816.29it/s]encode records: 88923it [00:15, 5900.99it/s]encode records: 89514it [00:15, 5824.57it/s]encode records: 90117it [00:15, 5884.05it/s]encode records: 90706it [00:15, 5840.94it/s]encode records: 91315it [00:15, 5913.12it/s]encode records: 91907it [00:15, 5826.84it/s]encode records: 92504it [00:15, 5866.78it/s]encode records: 93103it [00:15, 5901.74it/s]encode records: 93694it [00:15, 5843.66it/s]encode records: 94300it [00:16, 5902.52it/s]encode records: 94891it [00:16, 5858.18it/s]encode records: 95522it [00:16, 5990.73it/s]encode records: 96122it [00:16, 5971.71it/s]encode records: 96725it [00:16, 5987.46it/s]encode records: 97333it [00:16, 6014.41it/s]encode records: 97935it [00:16, 5982.87it/s]encode records: 98534it [00:16, 5967.40it/s]encode records: 99133it [00:16, 5972.84it/s]encode records: 99740it [00:16, 5999.34it/s]encode records: 100340it [00:17, 5974.99it/s]encode records: 100953it [00:17, 6021.10it/s]encode records: 101585it [00:17, 6109.33it/s]encode records: 102197it [00:17, 6010.74it/s]encode records: 102799it [00:17, 6007.10it/s]encode records: 103413it [00:17, 6045.16it/s]encode records: 104018it [00:17, 6045.60it/s]encode records: 104627it [00:17, 6058.51it/s]encode records: 105233it [00:17, 6026.70it/s]encode records: 105836it [00:17, 6024.43it/s]encode records: 106439it [00:18, 6011.00it/s]encode records: 107041it [00:18, 6012.83it/s]encode records: 107658it [00:18, 6058.59it/s]encode records: 108264it [00:18, 6052.88it/s]encode records: 108870it [00:18, 5976.93it/s]encode records: 109468it [00:18, 5933.19it/s]encode records: 110076it [00:18, 5974.67it/s]encode records: 110676it [00:18, 5981.29it/s]encode records: 111282it [00:18, 6001.52it/s]encode records: 111883it [00:18, 5950.96it/s]encode records: 112497it [00:19, 6006.47it/s]encode records: 113119it [00:19, 6067.23it/s]encode records: 113726it [00:19, 6011.96it/s]encode records: 114328it [00:19, 5990.78it/s]encode records: 114945it [00:19, 6041.79it/s]encode records: 115550it [00:19, 5985.10it/s]encode records: 116162it [00:19, 6023.85it/s]encode records: 116807it [00:19, 6150.23it/s]encode records: 117423it [00:19, 6073.57it/s]encode records: 118031it [00:19, 6008.67it/s]encode records: 118643it [00:20, 6040.73it/s]encode records: 119248it [00:20, 5996.21it/s]encode records: 119848it [00:20, 5907.21it/s]encode records: 120443it [00:20, 5919.09it/s]encode records: 121064it [00:20, 6003.08it/s]encode records: 121689it [00:20, 6074.67it/s]encode records: 122297it [00:20, 5982.62it/s]encode records: 122917it [00:20, 6046.65it/s]encode records: 123546it [00:20, 6116.95it/s]encode records: 124181it [00:20, 6186.23it/s]encode records: 124800it [00:21, 6079.38it/s]encode records: 125409it [00:21, 6070.77it/s]encode records: 126032it [00:21, 6116.70it/s]encode records: 126649it [00:21, 6129.48it/s]encode records: 127263it [00:21, 6122.28it/s]encode records: 127896it [00:21, 6183.46it/s]encode records: 128515it [00:21, 6118.80it/s]encode records: 129128it [00:21, 6072.34it/s]encode records: 129751it [00:21, 6115.53it/s]encode records: 130363it [00:21, 6067.28it/s]encode records: 130976it [00:22, 6084.40it/s]encode records: 131603it [00:22, 6138.45it/s]encode records: 132217it [00:22, 6099.64it/s]encode records: 132828it [00:22, 6059.33it/s]encode records: 133448it [00:22, 6100.40it/s]encode records: 134059it [00:22, 5943.90it/s]encode records: 134669it [00:22, 5988.98it/s]encode records: 135298it [00:22, 6075.21it/s]encode records: 135518it [00:22, 5933.42it/s]
-{
-  "tokenizer": "spm_zh.model",
-  "vocab_size": 50000,
-  "dtype": "uint16",
-  "mode": "dialogue",
-  "train_tokens": 27887907,
-  "val_tokens": 279553,
-  "train_records": 134166,
-  "val_records": 1352,
-  "skipped_records": 0,
-  "val_ratio": 0.01,
-  "format": "raw contiguous token ids for causal language modeling"
-}
-
-===== V4.3 SFT log key lines =====
-loaded checkpoint weights from checkpoints/V4.0_sp50k_gpt2small_pretrain_5b/ckpt.pt
-train tokens=27,887,907, val tokens=279,553, dtype=uint16
-vocab_size=50000, block_size=1024, tokens/iter=65,536
-iter 0: train loss 3.6962, val loss 3.6957, ppl 40.28, lr 2.00e-08
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 500: train loss 2.8437, val loss 2.8370, ppl 17.06, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 1000: train loss 2.6654, val loss 2.6749, ppl 14.51, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 1500: train loss 2.5970, val loss 2.5947, ppl 13.39, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 2000: train loss 2.5370, val loss 2.5626, ppl 12.97, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 2500: train loss 2.4932, val loss 2.5302, ppl 12.56, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 3000: train loss 2.4633, val loss 2.5100, ppl 12.31, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 3500: train loss 2.4314, val loss 2.4729, ppl 11.86, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 4000: train loss 2.4036, val loss 2.4580, ppl 11.68, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 4500: train loss 2.3823, val loss 2.4519, ppl 11.61, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 5000: train loss 2.3563, val loss 2.4414, ppl 11.49, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 5500: train loss 2.3457, val loss 2.4296, ppl 11.35, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 6000: train loss 2.3184, val loss 2.4065, ppl 11.10, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 6500: train loss 2.2997, val loss 2.4008, ppl 11.03, lr 1.00e-05
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 7000: train loss 2.2802, val loss 2.4042, ppl 11.07, lr 1.01e-05
-iter 7500: train loss 2.2680, val loss 2.3888, ppl 10.90, lr 1.01e-05
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 8000: train loss 2.2651, val loss 2.3987, ppl 11.01, lr 1.01e-05
-
-===== V4.3 SFT last 80 lines =====
-iter 7230: loss 2.3791, lr 1.01e-05, tok/s 297,341
-iter 7240: loss 2.3804, lr 1.01e-05, tok/s 299,871
-iter 7250: loss 2.3568, lr 1.01e-05, tok/s 299,169
-iter 7260: loss 2.3686, lr 1.01e-05, tok/s 298,485
-iter 7270: loss 2.3738, lr 1.01e-05, tok/s 298,716
-iter 7280: loss 2.3502, lr 1.01e-05, tok/s 299,154
-iter 7290: loss 2.3606, lr 1.01e-05, tok/s 298,117
-iter 7300: loss 2.3706, lr 1.01e-05, tok/s 298,338
-iter 7310: loss 2.3815, lr 1.01e-05, tok/s 299,022
-iter 7320: loss 2.3774, lr 1.01e-05, tok/s 298,873
-iter 7330: loss 2.3693, lr 1.01e-05, tok/s 298,241
-iter 7340: loss 2.3727, lr 1.01e-05, tok/s 298,346
-iter 7350: loss 2.3796, lr 1.01e-05, tok/s 298,833
-iter 7360: loss 2.3659, lr 1.01e-05, tok/s 298,939
-iter 7370: loss 2.3670, lr 1.01e-05, tok/s 299,602
-iter 7380: loss 2.3777, lr 1.01e-05, tok/s 296,872
-iter 7390: loss 2.3661, lr 1.01e-05, tok/s 299,056
-iter 7400: loss 2.3644, lr 1.01e-05, tok/s 298,859
-iter 7410: loss 2.3541, lr 1.01e-05, tok/s 298,287
-iter 7420: loss 2.3702, lr 1.01e-05, tok/s 299,058
-iter 7430: loss 2.3529, lr 1.01e-05, tok/s 299,064
-iter 7440: loss 2.3500, lr 1.01e-05, tok/s 298,066
-iter 7450: loss 2.3781, lr 1.01e-05, tok/s 297,920
-iter 7460: loss 2.3664, lr 1.01e-05, tok/s 298,103
-iter 7470: loss 2.3606, lr 1.01e-05, tok/s 298,839
-iter 7480: loss 2.3544, lr 1.01e-05, tok/s 298,906
-iter 7490: loss 2.3781, lr 1.01e-05, tok/s 298,174
-iter 7500: train loss 2.2680, val loss 2.3888, ppl 10.90, lr 1.01e-05
-saved best checkpoint to checkpoints/V4.3_sp50k_gpt2small_sft_mix_filtered/ckpt.pt
-iter 7500: loss 2.3667, lr 1.01e-05, tok/s 45,516
-iter 7510: loss 2.3741, lr 1.01e-05, tok/s 299,557
-iter 7520: loss 2.3800, lr 1.01e-05, tok/s 299,067
-iter 7530: loss 2.3854, lr 1.01e-05, tok/s 298,679
-iter 7540: loss 2.3770, lr 1.01e-05, tok/s 299,426
-iter 7550: loss 2.3815, lr 1.01e-05, tok/s 298,190
-iter 7560: loss 2.3647, lr 1.01e-05, tok/s 298,592
-iter 7570: loss 2.3661, lr 1.01e-05, tok/s 299,454
-iter 7580: loss 2.3472, lr 1.01e-05, tok/s 298,485
-iter 7590: loss 2.3587, lr 1.01e-05, tok/s 299,417
-iter 7600: loss 2.3753, lr 1.01e-05, tok/s 299,066
-iter 7610: loss 2.3637, lr 1.01e-05, tok/s 299,247
-iter 7620: loss 2.3510, lr 1.01e-05, tok/s 298,988
-iter 7630: loss 2.3689, lr 1.01e-05, tok/s 298,925
-iter 7640: loss 2.3442, lr 1.01e-05, tok/s 299,411
-iter 7650: loss 2.3631, lr 1.01e-05, tok/s 298,371
-iter 7660: loss 2.3582, lr 1.01e-05, tok/s 299,415
-iter 7670: loss 2.3677, lr 1.01e-05, tok/s 298,656
-iter 7680: loss 2.3497, lr 1.01e-05, tok/s 298,180
-iter 7690: loss 2.3509, lr 1.01e-05, tok/s 299,259
-iter 7700: loss 2.3511, lr 1.01e-05, tok/s 299,055
-iter 7710: loss 2.3609, lr 1.01e-05, tok/s 299,095
-iter 7720: loss 2.3468, lr 1.01e-05, tok/s 299,188
-iter 7730: loss 2.3553, lr 1.01e-05, tok/s 298,455
-iter 7740: loss 2.3965, lr 1.01e-05, tok/s 298,756
-iter 7750: loss 2.3761, lr 1.01e-05, tok/s 299,370
-iter 7760: loss 2.3694, lr 1.01e-05, tok/s 297,696
-iter 7770: loss 2.3749, lr 1.01e-05, tok/s 299,729
-iter 7780: loss 2.3487, lr 1.01e-05, tok/s 298,900
-iter 7790: loss 2.3251, lr 1.01e-05, tok/s 298,205
-iter 7800: loss 2.3379, lr 1.01e-05, tok/s 299,229
-iter 7810: loss 2.3741, lr 1.01e-05, tok/s 298,964
-iter 7820: loss 2.3847, lr 1.01e-05, tok/s 298,299
-iter 7830: loss 2.3645, lr 1.01e-05, tok/s 299,129
-iter 7840: loss 2.3608, lr 1.01e-05, tok/s 298,971
-iter 7850: loss 2.3642, lr 1.01e-05, tok/s 298,181
-iter 7860: loss 2.3400, lr 1.01e-05, tok/s 298,407
-iter 7870: loss 2.3406, lr 1.01e-05, tok/s 298,704
-iter 7880: loss 2.3497, lr 1.01e-05, tok/s 298,147
-iter 7890: loss 2.3602, lr 1.01e-05, tok/s 298,792
-iter 7900: loss 2.3491, lr 1.01e-05, tok/s 297,788
-iter 7910: loss 2.3297, lr 1.01e-05, tok/s 297,445
-iter 7920: loss 2.3522, lr 1.01e-05, tok/s 297,957
-iter 7930: loss 2.3628, lr 1.01e-05, tok/s 298,359
-iter 7940: loss 2.3623, lr 1.01e-05, tok/s 297,861
-iter 7950: loss 2.3563, lr 1.01e-05, tok/s 298,222
-iter 7960: loss 2.3593, lr 1.01e-05, tok/s 298,625
-iter 7970: loss 2.3566, lr 1.01e-05, tok/s 299,290
-iter 7980: loss 2.3546, lr 1.01e-05, tok/s 298,527
-iter 7990: loss 2.3668, lr 1.01e-05, tok/s 299,027
-iter 8000: train loss 2.2651, val loss 2.3987, ppl 11.01, lr 1.01e-05
