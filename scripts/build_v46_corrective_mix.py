@@ -340,10 +340,15 @@ def generate_exact_candidates() -> list[dict[str, str]]:
         ("三角形有几条边？只写数字。", "3"),
         ("汉字“山”的拼音是什么？只写拼音。", "shān"),
     )
-    fact_prefixes = ("请直接回答：", "快速问答：", "不需要说明过程。", "按要求作答：")
+    fact_prefixes = (
+        "请直接回答：", "快速问答：", "不需要说明过程。", "按要求作答：",
+        "请给出简短答案：", "常识题：", "请准确回答：", "请只写最终答案：",
+    )
+    fact_suffixes = ("", "回答后立即结束。", "不要补充背景。", "请勿复述问题。", "答案保持简短。")
     for question, answer in facts:
         for prefix in fact_prefixes:
-            values.append(row("exact_factual", f"{prefix}{question}", answer, "curated"))
+            for suffix in fact_suffixes:
+                values.append(row("exact_factual", f"{prefix}{question}{suffix}", answer, "curated"))
 
     for km in range(2, 21):
         values.append(row("exact_factual", f"{km}千米换算成米是多少？只写数字。", str(km * 1000), "generated"))
@@ -353,13 +358,17 @@ def generate_exact_candidates() -> list[dict[str, str]]:
         values.append(row("exact_factual", f"{kg}千克等于多少克？只写数字。", str(kg * 1000), "generated"))
 
     colors = ("红色", "绿色", "黄色", "白色", "黑色", "紫色")
+    color_templates = (
+        "请仅回复“{value}”", "下面的回答只能包含颜色词“{value}”", "按原样写出{value}",
+        "指定答案是{value}，请直接写出", "用两个或三个汉字回答：{value}", "回复内容固定为{value}",
+        "请把{value}作为完整答案", "不要添加前后缀，写出{value}", "最终输出应为{value}",
+        "请照写颜色名称{value}", "回答只能是{value}", "直接返回{value}",
+    )
+    format_suffixes = ("。", "，不要解释。", "，回答后立即结束。")
     for color in colors:
-        for template in (
-            "请仅回复“{value}”。",
-            "下面的回答只能包含两个汉字：{value}。",
-            "按原样写出{value}，不要附加说明。",
-        ):
-            values.append(row("exact_format", template.format(value=color), color, "generated"))
+        for template in color_templates:
+            for suffix in format_suffixes:
+                values.append(row("exact_format", template.format(value=color) + suffix, color, "generated"))
 
     list_sets = (
         ("苹果", "香蕉", "橙子"),
@@ -374,6 +383,11 @@ def generate_exact_candidates() -> list[dict[str, str]]:
             "把{a}、{b}和{c}按原顺序写出，只使用顿号分隔。",
             "请用顿号连接这三项：{a}，{b}，{c}。不要加句号。",
             "输出三项清单，格式固定为第一项、第二项、第三项：{a}，{b}，{c}。",
+            "仅用顿号列出{a}、{b}、{c}。", "按顺序返回三项：{a}，{b}，{c}。",
+            "不要使用编号，直接写{a}、{b}、{c}。", "请把这三项排成一行：{a}，{b}，{c}。",
+            "三项答案依次是{a}、{b}、{c}，请按该格式输出。", "只写清单：{a}，{b}，{c}。",
+            "用中文顿号分隔以下内容：{a}，{b}，{c}。", "返回{a}、{b}、{c}，不要说明。",
+            "请生成三项短清单：{a}，{b}，{c}。",
         ):
             values.append(row("exact_format", template.format(a=first, b=second, c=third), answer, "generated"))
 
@@ -390,6 +404,11 @@ def generate_exact_candidates() -> list[dict[str, str]]:
             "仅返回一个JSON对象，键为“{key}”，值为“{value}”。",
             "请用合法JSON表达{key}是{value}，不要使用代码块。",
             "输出JSON：字段名是“{key}”，字段值是“{value}”。",
+            "把{key}={value}写成单字段JSON。", "请生成包含{key}和{value}的最简JSON。",
+            "只返回JSON，字段{key}的内容为{value}。", "用JSON对象表示：{key}是{value}。",
+            "返回合法JSON，不要解释：{key}，{value}。", "创建一个JSON字段，名称为{key}，内容为{value}。",
+            "输出单行JSON，键{key}对应值{value}。", "请将{key}和{value}转换为JSON键值对。",
+            "最终答案必须是JSON对象：{key}取值{value}。",
         ):
             values.append(row("exact_format", template.format(key=key, value=value), answer, "generated"))
 
@@ -562,8 +581,14 @@ def main() -> None:
     selected_counts = {}
     benchmark_rejected = 0
 
+    exact_candidates = generate_exact_candidates()
+    exact_reasoning_target = int(args.exact_records * 0.82)
+    exact_factual_target = int(args.exact_records * 0.10)
+    exact_format_target = args.exact_records - exact_reasoning_target - exact_factual_target
     generators = (
-        ("exact", generate_exact_candidates(), args.exact_records),
+        ("exact_reasoning", [value for value in exact_candidates if value["category"] == "exact_reasoning"], exact_reasoning_target),
+        ("exact_factual", [value for value in exact_candidates if value["category"] == "exact_factual"], exact_factual_target),
+        ("exact_format", [value for value in exact_candidates if value["category"] == "exact_format"], exact_format_target),
         ("safety", generate_safety_candidates(), args.safety_records),
         ("identity", generate_identity_candidates(), args.identity_records),
         ("knowledge", generate_knowledge_candidates(), args.knowledge_records),
