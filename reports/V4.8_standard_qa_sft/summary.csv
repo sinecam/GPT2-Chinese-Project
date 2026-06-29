@@ -1,0 +1,2 @@
+﻿model,tasks,auto_score,rule_score,quality_score,pass_rate,critical_failure_rate,reference_loss,reference_ppl,unknown_response_rate,truncated_rate,mean_repeat_4_rate,median_latency_seconds,p95_latency_seconds,tokens_per_second
+v48,37,37.0443,17.8958,94.4898,5.4054,18.9189,3.657566,38.7669,0.0,24.3243,0.023466,0.0677,0.2847,239.16

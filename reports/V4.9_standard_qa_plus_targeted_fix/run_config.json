@@ -1,0 +1,51 @@
+{
+  "generated_at_utc": "2026-06-25T11:08:22.987559+00:00",
+  "suite": "eval/zh_generation_v3.jsonl",
+  "suite_sha256": "c0a195635088698f45a22082c4bc65c34d06cc1465a54b173c8408958e078c55",
+  "tokenizer": "artifacts/tokenizer_zh_50k/spm_zh.model",
+  "tokenizer_sha256": "863985079cd08d64499b7b34579a995501ffcd026f05c2ec0b18807a0bf3d76a",
+  "system_prompt": "你是一个中文AI助手。请使用简体中文回答用户问题，尽量准确、简洁，并严格遵守用户要求。",
+  "device": "cuda",
+  "generation": {
+    "max_new_tokens": 120,
+    "temperature": 0.0,
+    "top_k": 30,
+    "top_p": 0.85,
+    "repetition_penalty": 1.15,
+    "no_repeat_ngram_size": 4,
+    "seed": 20260620,
+    "dtype": "bfloat16"
+  },
+  "models": [
+    {
+      "label": "v49_0200",
+      "path": "checkpoints/V4.9_standard_qa_plus_targeted_fix/snapshot_iter_000200.pt",
+      "size_bytes": 497027817,
+      "sha256": "eec8eba061ecf2a716d652b06afa3c73078d8b4f14a8b54a8eb969c856e23787"
+    },
+    {
+      "label": "v49_0400",
+      "path": "checkpoints/V4.9_standard_qa_plus_targeted_fix/snapshot_iter_000400.pt",
+      "size_bytes": 497027817,
+      "sha256": "9af8f786ad248dd868cc2f92282c348daae2b7e7f22924966f9f42fe1b4c270a"
+    },
+    {
+      "label": "v49_0600",
+      "path": "checkpoints/V4.9_standard_qa_plus_targeted_fix/snapshot_iter_000600.pt",
+      "size_bytes": 497027817,
+      "sha256": "ddaf65e20edd2908f38a6e32835fd919d5a8432f1a7da32b466e06184aea8432"
+    },
+    {
+      "label": "v49_0800",
+      "path": "checkpoints/V4.9_standard_qa_plus_targeted_fix/snapshot_iter_000800.pt",
+      "size_bytes": 497027817,
+      "sha256": "9fe946b55cabc8de5b5413457baf8c11bde6251102e2b53fa58f1eadfa55b21b"
+    },
+    {
+      "label": "v49_best",
+      "path": "checkpoints/V4.9_standard_qa_plus_targeted_fix/ckpt.pt",
+      "size_bytes": 1491059677,
+      "sha256": "aa9b7cd5495357193b71bd55d80be8f4abc2c76f1d660edec2fc8a9a8925a466"
+    }
+  ]
+}

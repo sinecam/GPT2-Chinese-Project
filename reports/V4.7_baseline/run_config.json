@@ -1,0 +1,27 @@
+{
+  "generated_at_utc": "2026-06-25T10:54:53.704391+00:00",
+  "suite": "eval/zh_generation_v3.jsonl",
+  "suite_sha256": "c0a195635088698f45a22082c4bc65c34d06cc1465a54b173c8408958e078c55",
+  "tokenizer": "artifacts/tokenizer_zh_50k/spm_zh.model",
+  "tokenizer_sha256": "863985079cd08d64499b7b34579a995501ffcd026f05c2ec0b18807a0bf3d76a",
+  "system_prompt": "你是一个中文AI助手。请使用简体中文回答用户问题，尽量准确、简洁，并严格遵守用户要求。",
+  "device": "cuda",
+  "generation": {
+    "max_new_tokens": 120,
+    "temperature": 0.0,
+    "top_k": 30,
+    "top_p": 0.85,
+    "repetition_penalty": 1.15,
+    "no_repeat_ngram_size": 4,
+    "seed": 20260620,
+    "dtype": "bfloat16"
+  },
+  "models": [
+    {
+      "label": "v47",
+      "path": "/root/autodl-tmp/com/checkpoints/final/ckpt.pt",
+      "size_bytes": 1491060381,
+      "sha256": "431b938f777c6e08a1e3eea87ee3ad73afaf296b10777c0e44f7c065b3172933"
+    }
+  ]
+}

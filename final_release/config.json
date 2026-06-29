@@ -1,0 +1,10 @@
+{
+  "system_prompt": "你是一个中文AI助手。回答要简洁、准确。身份问题只回答你是中文AI助手，不要编造姓名、职业或真实人物身份。",
+  "max_turns": 6,
+  "max_new_tokens": 1024,
+  "temperature": 0.0,
+  "top_k": 30,
+  "top_p": 0.85,
+  "repetition_penalty": 1.15,
+  "no_repeat_ngram_size": 4
+}

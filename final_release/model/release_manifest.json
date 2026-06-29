@@ -1,0 +1,9 @@
+{
+  "release": "V4.7_final",
+  "iteration": 600,
+  "best_val_loss": 2.055218458175659,
+  "source_checkpoint": "checkpoints/final/ckpt.pt",
+  "source_checkpoint_sha256": "431b938f777c6e08a1e3eea87ee3ad73afaf296b10777c0e44f7c065b3172933",
+  "model_sha256": "57864d07a74223fb8ac8f9e941236ca8e8107addb6059fc77845bd5729ed27bf",
+  "tokenizer_sha256": "863985079cd08d64499b7b34579a995501ffcd026f05c2ec0b18807a0bf3d76a"
+}

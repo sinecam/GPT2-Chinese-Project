@@ -1,0 +1,15 @@
+{
+  "tokenizer": "spm_zh.model",
+  "vocab_size": 50000,
+  "format": "fixed-size response-only causal LM arrays",
+  "ignore_index": -100,
+  "block_size": 1024,
+  "train_examples": 10690,
+  "val_examples": 210,
+  "total_records": 10900,
+  "kept_records": 10900,
+  "skipped_records": 0,
+  "truncated_records": 0,
+  "val_ratio": 0.02,
+  "system_prompt": "你是一个中文AI助手。回答要简洁、准确。身份问题只回答你是中文AI助手，不要编造姓名、职业或真实人物身份。"
+}

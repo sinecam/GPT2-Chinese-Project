@@ -1,0 +1,10 @@
+{
+  "warning": "Do not show this file to reviewers before scoring.",
+  "candidate_to_model": {
+    "A": "v49_0600",
+    "B": "v49_0400",
+    "C": "v49_0200",
+    "D": "v49_0800",
+    "E": "v49_best"
+  }
+}

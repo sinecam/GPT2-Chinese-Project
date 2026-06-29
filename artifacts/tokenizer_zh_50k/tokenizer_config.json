@@ -1,0 +1,22 @@
+{
+  "tokenizer": "sentencepiece",
+  "model_file": "spm_zh.model",
+  "vocab_size": 50000,
+  "model_type": "bpe",
+  "character_coverage": 0.9995,
+  "byte_fallback": false,
+  "corpus_lines": 267122,
+  "corpus_chars": 200000000,
+  "num_threads": 50,
+  "num_workers": 16,
+  "special_tokens": {
+    "pad_id": 0,
+    "unk_id": 1,
+    "bos_id": 2,
+    "eos_id": 3,
+    "user_id": 4,
+    "assistant_id": 5,
+    "system_id": 6,
+    "sep_id": 7
+  }
+}
